@@ -1,0 +1,187 @@
+openapi: 3.0.0
+info:
+  title: Distributed Synchronization System API
+  version: 1.0.0
+  description: API untuk sistem sinkronisasi terdistribusi
+
+servers:
+  - url: http://localhost:8000
+    description: Development server
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: Node is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  node_id:
+                    type: integer
+
+  /lock/acquire:
+    post:
+      summary: Acquire distributed lock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - resource_id
+                - client_id
+              properties:
+                resource_id:
+                  type: string
+                client_id:
+                  type: integer
+                lock_type:
+                  type: string
+                  enum: [shared, exclusive]
+                timeout:
+                  type: number
+      responses:
+        '200':
+          description: Lock acquired successfully
+        '408':
+          description: Lock acquisition timeout
+
+  /lock/release:
+    post:
+      summary: Release distributed lock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - resource_id
+                - client_id
+              properties:
+                resource_id:
+                  type: string
+                client_id:
+                  type: integer
+      responses:
+        '200':
+          description: Lock released successfully
+
+  /queue/enqueue:
+    post:
+      summary: Enqueue item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - queue_name
+                - item
+              properties:
+                queue_name:
+                  type: string
+                item:
+                  type: object
+                priority:
+                  type: integer
+      responses:
+        '200':
+          description: Item enqueued successfully
+
+  /queue/dequeue:
+    post:
+      summary: Dequeue item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - queue_name
+              properties:
+                queue_name:
+                  type: string
+                timeout:
+                  type: number
+      responses:
+        '200':
+          description: Item dequeued successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    type: object
+
+  /cache/read:
+    get:
+      summary: Read from cache
+      parameters:
+        - name: key
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cache hit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  value:
+                    type: string
+        '404':
+          description: Cache miss
+
+  /cache/write:
+    post:
+      summary: Write to cache
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - key
+                - value
+              properties:
+                key:
+                  type: string
+                value:
+                  type: string
+      responses:
+        '200':
+          description: Written to cache successfully
+
+  /metrics:
+    get:
+      summary: Get system metrics
+      responses:
+        '200':
+          description: Metrics retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uptime:
+                    type: number
+                  cache_hit_rate:
+                    type: number
+                  operations:
+                    type: object
+ 

@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'distributed-nodes'
+    static_configs:
+      - targets:
+          - 'node1:9090'
+          - 'node2:9090'
+          - 'node3:9090'

@@ -1,0 +1,106 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - distributed-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  node1:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.node
+    environment:
+      - NODE_ID=1
+      - NODE_HOST=node1
+      - NODE_PORT=8000
+      - CLUSTER_NODES=node1:8000,node2:8001,node3:8002
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    ports:
+      - "8000:8000"
+      - "9090:9090"
+    networks:
+      - distributed-net
+    depends_on:
+      - redis
+    volumes:
+      - ../src:/app/src
+    restart: unless-stopped
+
+  node2:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.node
+    environment:
+      - NODE_ID=2
+      - NODE_HOST=node2
+      - NODE_PORT=8001
+      - CLUSTER_NODES=node1:8000,node2:8001,node3:8002
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    ports:
+      - "8001:8001"
+      - "9091:9090"
+    networks:
+      - distributed-net
+    depends_on:
+      - redis
+    volumes:
+      - ../src:/app/src
+    restart: unless-stopped
+
+  node3:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.node
+    environment:
+      - NODE_ID=3
+      - NODE_HOST=node3
+      - NODE_PORT=8002
+      - CLUSTER_NODES=node1:8000,node2:8001,node3:8002
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    ports:
+      - "8002:8002"
+      - "9092:9090"
+    networks:
+      - distributed-net
+    depends_on:
+      - redis
+    volumes:
+      - ../src:/app/src
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9093:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - distributed-net
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - distributed-net
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+
+networks:
+  distributed-net:
+    driver: bridge
