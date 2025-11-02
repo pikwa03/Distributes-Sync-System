@@ -1,3 +1,6 @@
+LINK YOUTUBE
+https://youtu.be/Y7a-CBV9z-0?si=RKd-1xyGO-7iEeo0 
+
 # Distributed Synchronization System
 
 Sistem sinkronisasi terdistribusi dengan Raft Consensus, Distributed Queue, dan Cache Coherence Protocol.
