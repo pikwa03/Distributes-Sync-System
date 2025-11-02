@@ -1,34 +1,27 @@
-# Web Framework & HTTP
-aiohttp==3.9.1
+# Core Dependencies
+asyncio>=3.4.3
+aiohttp>=3.9.0
+aioredis>=2.0.1
+python-dotenv>=1.0.0
 
-# Database & Cache
-redis==5.0.1
+# Network & Communication
+grpcio>=1.59.0
+grpcio-tools>=1.59.0
+protobuf>=4.25.0
 
-# Configuration & Settings (versi yang bisa install tanpa compilation)
-pydantic==2.4.2
-pydantic-settings==2.1.0
-python-dotenv==1.0.0
-
-# Monitoring
-prometheus-client==0.19.0
+# Data & State Management
+redis>=5.0.0
+pyyaml>=6.0.1
 
 # Testing
-pytest==7.4.3
-pytest-asyncio==0.21.1
-pytest-cov==4.1.0
+pytest>=7.4.3
+pytest-asyncio>=0.21.1
+pytest-cov>=4.1.0
+locust>=2.17.0
 
-# Load Testing
-locust==2.20.0
+# Monitoring & Metrics
+prometheus-client>=0.19.0
 
-# HTTP Client
-requests==2.31.0
-
-# Terminal Colors
-colorama==0.4.6
-
-# Security & Encryption
-cryptography==41.0.7
-PyJWT==2.8.0
-
-cryptography==41.0.7
-PyJWT==2.8.0
+# Utils
+psutil>=5.9.6
+colorlog>=6.8.0
